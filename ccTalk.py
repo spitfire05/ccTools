@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
 #ccTalk python library
-#Copyright (C) 2012 Nicolas Oberli
+#Copyright (C) 2012 Nicolas Oberli, (C) 2015 Micha³ Borejszo
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -46,7 +48,7 @@ def parseMessages(data):
         except:
             data = data[1:]
             continue
-    return (data, messages)
+    return messages
 
 # Header types definition
 headerTypes = {
@@ -347,7 +349,8 @@ class ccTalkPayload():
 #
 ##
 class ccTalkMessage():
-    def __init__(self, data='', source=1, destination=2, header=0, payload=''):
+    def __init__(self, data='', source=1, destination=2, header=0, payload='', io=None):
+        self.io = io
         if data == '':
             #Creates a blank message
             self.destination = destination
@@ -375,6 +378,14 @@ class ccTalkMessage():
             self.sigmode = 1
         else:
             raise Exception 
+
+    def send(self, io=None):
+        """
+        Writes this message to specified IO
+        """
+        if io is None:
+            io = self.io
+        io.write(self.raw())
 
     def raw(self):
         """
